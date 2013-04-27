@@ -47,6 +47,7 @@
      <Compile Include="Assets\6by7\ProBuilder\API Examples\Runtime Editing\RuntimeEdit.cs" />
      <Compile Include="Assets\6by7\ProBuilder\Classes\pbVersionBridge.cs" />
      <Compile Include="Assets\NewBehaviourScript.cs" />
+     <Compile Include="Assets\red_alert.cs" />
      <None Include="Assets\6by7\ProBuilder\VersionInfo.txt" />
      <None Include="Assets\6by7\_README-ProGrids-Free.txt" />
  <Reference Include="ProBuilderCore">
