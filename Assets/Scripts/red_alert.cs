@@ -16,7 +16,7 @@ public class red_alert : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Keypad0)){
+		if (Input.GetKeyDown(KeyCode.B)){
 			alert = !alert;
 		}
 		foreach(GameObject l in lights){
