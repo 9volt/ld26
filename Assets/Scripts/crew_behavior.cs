@@ -3,7 +3,7 @@ using System.Collections;
 
 public class crew_behavior : MonoBehaviour {
 	private NavMeshAgent nav;
-	private string name;
+	private string my_name;
 	private GameObject[] home_points;
 	private float last_move;
 	private idiort_move master;
@@ -11,8 +11,8 @@ public class crew_behavior : MonoBehaviour {
 	void Start () {
 		master = GameObject.FindGameObjectWithTag("Player").GetComponent<idiort_move>();
 		nav = GetComponent<NavMeshAgent>();
-		name = this.gameObject.name;
-		home_points = GameObject.FindGameObjectsWithTag(master.where_should_I_be(name));
+		my_name = this.gameObject.name;
+		home_points = GameObject.FindGameObjectsWithTag(master.where_should_I_be(my_name));
 		last_move = Time.time;
 		nav.SetDestination(pick_random_location());
 	}
