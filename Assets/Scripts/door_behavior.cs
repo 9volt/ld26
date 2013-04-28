@@ -5,10 +5,12 @@ public class door_behavior : MonoBehaviour {
 	private float last_up;
 	private Transform door;
 	private bool open;
+	private AudioSource audio;
 	// Use this for initialization
 	void Start () {
 		last_up = 0f;
 		door = this.transform.parent.GetComponent<Transform>();
+		audio = this.transform.parent.GetComponent<AudioSource>();
 		open = false;
 	}
 	
@@ -17,6 +19,7 @@ public class door_behavior : MonoBehaviour {
 			Vector3 up = new Vector3(0, 5, 0);
 			door.Translate(up);
 			last_up = Time.time;
+			audio.Play();
 			open = true;
 		}
 	}
