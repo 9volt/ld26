@@ -39,7 +39,7 @@ public class idiort_move : MonoBehaviour {
 		home = new Dictionary<string, string>();
 		home["captain"] = "captains_quarters";
 		home["first_mate"] = "captain_chair";
-		home["parasite"] = "common_room";
+		home["cook"] = "common_room";
 		home["doctor"] = "med_bay";
 		home["engineer"] = "engineering";
 		home["engineer_mate"] = "engineering";

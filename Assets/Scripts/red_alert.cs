@@ -5,19 +5,25 @@ public class red_alert : MonoBehaviour {
 	private GameObject[] lights;
 	private bool alert;
 	private bool rising;
-	
+	private AudioSource audio;
 	
 	// Use this for initialization
 	void Start () {
 		lights = GameObject.FindGameObjectsWithTag("lights");
 		alert = false;
 		rising = true;
+		audio = this.GetComponent<AudioSource>();
+	}
+	
+	void play_klaxon(){
+		audio.Play();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.B)){
 			alert = !alert;
+			play_klaxon();
 		}
 		foreach(GameObject l in lights){
 			Light light = l.GetComponent<Light>();
