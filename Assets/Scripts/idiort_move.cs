@@ -7,7 +7,7 @@ public class idiort_move : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
-		navs = GameObject.FindGameObjectsWithTag("nav");
+		navs = GameObject.FindGameObjectsWithTag("bridge");
 	}
 	
 	// Update is called once per frame
