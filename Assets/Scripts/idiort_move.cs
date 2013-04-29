@@ -35,12 +35,15 @@ public class idiort_move : MonoBehaviour {
 	private string next_day;
 	private AudioSource sound;
 	private bool day_starting;
+	public Texture2D black_screen;
+	private bool good_end;
+	private bool bad_end;
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
 		rooms_visited = new List<string>();
 		idling = true;
-		day = "1";
+		day = "1.0";
 //		home["captain"] = "captains_quarters";
 //		home["first_mate"] = "captain_chair";
 //		home["cook"] = "common_room";
@@ -55,6 +58,8 @@ public class idiort_move : MonoBehaviour {
 		walking_to_brig = false;
 		next_day = null;
 		day_starting = false;
+		good_end = false;
+		bad_end = false;
 		sound = this.GetComponent<AudioSource>();
 		create_states();
 	}
@@ -713,7 +718,7 @@ public class idiort_move : MonoBehaviour {
         states["5.17"].add_child("leftenant", states["7.1"]);
 		
 		
-		current_state = states["2.0"];
+		current_state = states["1.0"];
 	}
 	
 	public void brig(string s){
@@ -726,6 +731,11 @@ public class idiort_move : MonoBehaviour {
 	void end_day(){
 		current_state = current_state.get_child(next_day);
 		day = current_state.day;
+		if(day == "7.1"){
+			bad_end = true;
+		}else if(day == "7.0"){
+			good_end = true;	
+		}
 		Debug.Log(day);
 		current_state.play_intro();
 		day_starting = true;
@@ -754,6 +764,7 @@ public class idiort_move : MonoBehaviour {
 	
 	void move_to_bridge(){
 		idling = !idling;
+		current_state.play_outro();
 		playing = false;
 		c = null;
 		this.GetComponent<red_alert>().emergency();
@@ -783,6 +794,18 @@ public class idiort_move : MonoBehaviour {
 		}
 	}
 	
+	void OnGUI(){
+		if(bad_end){
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
+			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "You died during the time skip, better luck next time");
+		} else if(good_end){
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
+			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "You jailed the parasite and saved the crew!");
+		} else if(day_starting){
+			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
+		}
+	}
+	
 	// Update is called once per frame
 	void Update () {
 		if(day_starting && !sound.isPlaying){
@@ -793,7 +816,12 @@ public class idiort_move : MonoBehaviour {
 		if(playing){
 			playing = c.play();
 		} else if(rooms_visited.Count >= 2 && idling){
-			move_to_bridge();
+			if(day == "1.0"){
+				next_day = "day_one";
+				end_day();
+			} else {
+				move_to_bridge();
+			}
 		}
 		if (Input.GetKeyDown(KeyCode.B)){
 			if(idling){
