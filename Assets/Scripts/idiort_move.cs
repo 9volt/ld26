@@ -812,12 +812,20 @@ public class idiort_move : MonoBehaviour {
 			idling = true;
 			day_starting = false;
 			this.GetComponent<red_alert>().end_alert();
+		} else if(day_starting){
+			//force people to move into position during blackout
+			idling = true;
 		}
 		if(playing){
 			playing = c.play();
 		} else if(rooms_visited.Count >= 2 && idling){
 			if(day == "1.0"){
 				next_day = "day_one";
+				AudioSource bgm = GameObject.Find("bgm").GetComponent<AudioSource>();
+				bgm.Stop();
+				AudioClip a = Resources.Load("bad_ending") as AudioClip;
+				bgm.clip = a;
+				bgm.Play();
 				end_day();
 			} else {
 				move_to_bridge();
