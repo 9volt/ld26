@@ -21,6 +21,8 @@ public class red_alert : MonoBehaviour {
 	}
 	
 	void play_klaxon(){
+		AudioClip a = Resources.Load("red_alert") as AudioClip;
+		audio.clip = a;
 		audio.Play();
 	}
 	

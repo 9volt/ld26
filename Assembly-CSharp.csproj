@@ -46,6 +46,7 @@
   <ItemGroup>
      <Compile Include="Assets\6by7\ProBuilder\API Examples\Runtime Editing\RuntimeEdit.cs" />
      <Compile Include="Assets\6by7\ProBuilder\Classes\pbVersionBridge.cs" />
+     <Compile Include="Assets\Scripts\brigger.cs" />
      <Compile Include="Assets\Scripts\crew_behavior.cs" />
      <Compile Include="Assets\Scripts\door_behavior.cs" />
      <Compile Include="Assets\Scripts\idiort_move.cs" />
