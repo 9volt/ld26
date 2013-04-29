@@ -15,16 +15,17 @@ public class red_alert : MonoBehaviour {
 		audio = this.GetComponent<AudioSource>();
 	}
 	
+	public void emergency(){
+		alert = !alert;
+		play_klaxon();
+	}
+	
 	void play_klaxon(){
 		audio.Play();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.B)){
-			alert = !alert;
-			play_klaxon();
-		}
 		foreach(GameObject l in lights){
 			Light light = l.GetComponent<Light>();
 			if (alert){

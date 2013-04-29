@@ -31,10 +31,12 @@ public class idiort_move : MonoBehaviour {
 	private State current_state;
 	private Dictionary<string, State> states;
 	private bool playing;
+	private int rooms_visited;
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
 		navs = GameObject.FindGameObjectsWithTag("bridge");
+		rooms_visited = 0;
 		idling = true;
 		day = 1;
 //		home["captain"] = "captains_quarters";
@@ -80,6 +82,25 @@ public class idiort_move : MonoBehaviour {
 		if(conv != null){
 			c = conv;
 			playing = true;
+			rooms_visited++;
+		}
+	}
+	
+	void emergency(){
+		idling = !idling;
+		this.GetComponent<red_alert>().emergency();
+		int i = 0;
+		idiorts = GameObject.FindGameObjectsWithTag("idiort");
+		foreach(GameObject idiort in idiorts){
+			NavMeshAgent n = idiort.GetComponent<NavMeshAgent>();
+			Transform dest;
+			if(idiort.name == "captain"){
+				dest = GameObject.Find("captains_chair").GetComponent<Transform>();
+			} else {
+				dest = navs[i].GetComponent<Transform>();
+				i++;
+			}
+			n.SetDestination(dest.position);
 		}
 	}
 	
@@ -87,23 +108,14 @@ public class idiort_move : MonoBehaviour {
 	void Update () {
 		if(playing){
 			playing = c.play();
+		} else if(rooms_visited > 1 && idling){
+			//emergency();
 		}
 		if (Input.GetKeyDown(KeyCode.B)){
 			if(idling){
-				idling = !idling;
-				int i = 0;
-				foreach(GameObject idiort in idiorts){
-					NavMeshAgent n = idiort.GetComponent<NavMeshAgent>();
-					Transform dest;
-					if(idiort.name == "captain"){
-						dest = GameObject.Find("captains_chair").GetComponent<Transform>();
-					} else {
-						dest = navs[i].GetComponent<Transform>();
-						i++;
-					}
-					n.SetDestination(dest.position);
-				}
+				emergency();
 			} else {
+				this.GetComponent<red_alert>().emergency();
 				idling = !idling;	
 			}
 		}
@@ -177,7 +189,7 @@ public class State {
 		if(room_assignments.ContainsKey(who)){
 			return room_assignments[who];
 		} else {
-			return "common_room";
+			return null;
 		}
 	}
 	

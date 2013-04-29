@@ -12,9 +12,14 @@ public class crew_behavior : MonoBehaviour {
 		master = GameObject.FindGameObjectWithTag("Player").GetComponent<idiort_move>();
 		nav = GetComponent<NavMeshAgent>();
 		my_name = this.gameObject.name;
-		home_points = GameObject.FindGameObjectsWithTag(master.where_should_I_be(my_name));
 		last_move = Time.time;
-		nav.SetDestination(pick_random_location());
+		string room = master.where_should_I_be(my_name);
+		if(room == null){
+			Destroy(this.gameObject);
+		} else {
+			home_points = GameObject.FindGameObjectsWithTag(room);
+			nav.SetDestination(pick_random_location());
+		}
 	}
 	
 	Vector3 pick_random_location(){
@@ -26,12 +31,17 @@ public class crew_behavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(nav.remainingDistance < 5f && master.idling){
-			if(Time.time - last_move > 10){
-				nav.SetDestination(pick_random_location());
-				last_move = Time.time;
+		string room = master.where_should_I_be(my_name);
+		if(room == null){
+			Destroy(this.gameObject);
+		} else {
+			home_points = GameObject.FindGameObjectsWithTag(master.where_should_I_be(my_name));
+			if(nav.remainingDistance < 5f && master.idling){
+				if(Time.time - last_move > 10){
+					nav.SetDestination(pick_random_location());
+					last_move = Time.time;
+				}
 			}
 		}
-		
 	}
 }
