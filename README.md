@@ -1,4 +1,4 @@
- ## Murder on the Tuberosum
+## Murder on the Tuberosum
 
 This is Joseph and Sonya's Ludum Dare 26 jam game.
 
