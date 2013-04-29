@@ -25,12 +25,12 @@ public struct file_loc {
 public class idiort_move : MonoBehaviour {
 	private GameObject[] idiorts;
 	public bool idling;
-	public int day;
+	public string day;
 	private Converstaion c;
 	private State current_state;
 	private Dictionary<string, State> states;
 	private bool playing;
-	private int rooms_visited;
+	private List<string> rooms_visited;
 	public bool walking_to_brig;
 	private string next_day;
 	private AudioSource sound;
@@ -38,9 +38,9 @@ public class idiort_move : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
-		rooms_visited = 0;
+		rooms_visited = new List<string>();
 		idling = true;
-		day = 1;
+		day = "1";
 //		home["captain"] = "captains_quarters";
 //		home["first_mate"] = "captain_chair";
 //		home["cook"] = "common_room";
@@ -60,8 +60,80 @@ public class idiort_move : MonoBehaviour {
 	}
 	
 	private void create_states(){
-		//Day 3.1
+ 		//Day 1.0 //no brigging at end of day 1
 		Dictionary<string, string> locations = new Dictionary<string, string>(){
+			{"doctor", "med_bay"},
+			{"leftenant", "med_bay"},
+			{"engineer", "engineering"},
+			{"cook", "common_room"},
+			{"cargo_man", "cargo_hold"},
+			{"cargo_man_mate", "engineering"},
+            {"navigator", "common_room"},
+            {"cabin_boy", "cargo_hold"},
+            {"first_mate", "bridge"},
+			{"captain", "bridge"}
+		};
+		Dictionary<string, Converstaion> convos = new Dictionary<string, Converstaion>(){
+			{"cargo_hold", new Converstaion(new file_loc[2]{
+					new file_loc("cargo_man", "4"),
+					new file_loc("cabin_boy", "169")})},
+			{"med_bay", new Converstaion(new file_loc[3]{
+					new file_loc("leftenant", "186"),
+					new file_loc("doctor", "187") ,
+					new file_loc("leftenant", "188")})},
+			{"engineering", new Converstaion(new file_loc[5]{
+					new file_loc("cargo_man_mate", "2"),
+                    new file_loc("engineer", "182"),
+					new file_loc("cargo_man_mate", "183") ,
+					new file_loc("engineer", "184") ,
+					new file_loc("engineer", "185")})},  //player
+			{"common_room", new Converstaion(new file_loc[3]{
+					new file_loc("navigator", "3"),
+                    new file_loc("cook", "180"),
+					new file_loc("navigator", "181")})}, 
+			{"bridge", new Converstaion(new file_loc[4]{
+					new file_loc("captain", "1"),
+                    new file_loc("captain", "161"), //player
+                    new file_loc("captain", "162"),
+					new file_loc("captain", "163")})}, //player
+		};
+		states["1.0"] = new State("1.0", null, null, convos, locations);
+        
+        //Day 2.0
+		locations = new Dictionary<string, string>(){
+			{"doctor", "med_bay"},
+			{"leftenant", "cargo_hold"},
+			{"engineer", "engineering"},
+			{"cook", "common_room"},
+			{"cargo_man", "cargo_hold"},
+			{"cargo_man_mate", "common_room"},
+            {"navigator", "common_room"},
+            {"first_mate", "engineering"},
+			{"captain", "captains_quarters"}
+		};
+		convos = new Dictionary<string, Converstaion>(){
+			{"cargo_hold", new Converstaion(new file_loc[2]{
+					new file_loc("cargo_man", "9"),
+					new file_loc("leftenant", "192")})},
+			{"med_bay", new Converstaion(new file_loc[1]{
+					new file_loc("doctor", "6")})},
+			{"engineering", new Converstaion(new file_loc[2]{
+					new file_loc("first_mate", "7") ,
+					new file_loc("engineer", "191")})},  //player
+			{"common_room", new Converstaion(new file_loc[4]{
+					new file_loc("navigator", "193"),
+                    new file_loc("cook", "194"),
+                    new file_loc("navigator", "195"),
+					new file_loc("cargo_man_mate", "196")})}, 
+			{"captains_quarters", new Converstaion(new file_loc[2]{
+					new file_loc("captain", "8"),
+					new file_loc("captain", "197")})}, //player
+		};
+		states["2.0"] = new State("2.0", "171", "11", convos, locations);
+    
+    
+		//Day 3.1
+		locations = new Dictionary<string, string>(){
 			{"doctor", "engineering"},
 			{"leftenant", "med_bay"},
 			{"engineer", "engineering"},
@@ -70,7 +142,7 @@ public class idiort_move : MonoBehaviour {
 			{"cargo_man_mate", "cargo_hold"},
 			{"captain", "captains_quarters"}
 		};
-		Dictionary<string, Converstaion> convos = new Dictionary<string, Converstaion>(){
+		convos = new Dictionary<string, Converstaion>(){
 			{"cargo_hold", new Converstaion(new file_loc[2]{
 					new file_loc("cargo_man", "35"),
 					new file_loc("cargo_man_mate", "212")})},
@@ -197,15 +269,15 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 4.3  //mutiny state
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"engineer", "bridge"}
+			{"leftenant", "security"},
+			{"cook", "security"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"engineer", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
 			
-			{"bridge", new Converstaion(new file_loc[1]{
+			{"security", new Converstaion(new file_loc[1]{
 					new file_loc("leftenant", "61")})}//player
 					
 		};
@@ -294,15 +366,15 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.0 - nodeath
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"doctor", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"captain", "bridge"}
+			{"leftenant", "security"},
+			{"doctor", "security"},
+			{"cook", "brig"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"captain", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
-			{"bridge", new Converstaion(new file_loc[2]{
+			{"security", new Converstaion(new file_loc[2]{
 					new file_loc("captain", "82"),
 					new file_loc("cook", "277")})}
 		
@@ -311,15 +383,15 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.1 - nodeath
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"doctor", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"captain", "bridge"}
+			{"leftenant", "security"},
+			{"doctor", "brig"},
+			{"cook", "security"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"captain", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
-			{"bridge", new Converstaion(new file_loc[2]{
+			{"security", new Converstaion(new file_loc[2]{
 					new file_loc("captain", "82"),
 					new file_loc("doctor", "278")})}
 		
@@ -328,11 +400,11 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.2
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"captain", "bridge"}
+			{"leftenant", "security"},
+			{"cook", "security"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"captain", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
 		};
@@ -340,16 +412,16 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.3 and 5.12  //mutiny state (differennt form 4.3 cause doctor is alive)
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"cook", "bridge"},
-			{"doctor", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"engineer", "bridge"}
+			{"leftenant", "security"},
+			{"cook", "security"},
+			{"doctor", "security"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"engineer", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
 			
-			{"bridge", new Converstaion(new file_loc[1]{
+			{"security", new Converstaion(new file_loc[1]{
 					new file_loc("leftenant", "61")})}//player
 					
 		};
@@ -412,15 +484,15 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.10 - nodeath
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"doctor", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"captain", "bridge"}
+			{"leftenant", "security"},
+			{"doctor", "security"},
+			{"cook", "brig"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"captain", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
-			{"bridge", new Converstaion(new file_loc[2]{
+			{"security", new Converstaion(new file_loc[2]{
 					new file_loc("captain", "82"),
 					new file_loc("cook", "321")})}
 		
@@ -429,15 +501,15 @@ public class idiort_move : MonoBehaviour {
 		
 		//Day 5.11 - nodeath
 		 locations = new Dictionary<string, string>(){
-			{"leftenant", "bridge"},
-			{"doctor", "bridge"},
-			{"cook", "bridge"},
-			{"cargo_man", "bridge"},
-			{"cargo_man_mate", "bridge"},
-			{"captain", "bridge"}
+			{"leftenant", "security"},
+			{"doctor", "brig"},
+			{"cook", "security"},
+			{"cargo_man", "security"},
+			{"cargo_man_mate", "security"},
+			{"captain", "security"}
 		};
 		convos = new Dictionary<string, Converstaion>(){
-			{"bridge", new Converstaion(new file_loc[2]{
+			{"security", new Converstaion(new file_loc[2]{
 					new file_loc("captain", "82"),
 					new file_loc("doctor", "319")})}
 		
@@ -500,8 +572,148 @@ public class idiort_move : MonoBehaviour {
 		   //6.5 is an ending  = 5.8
 		//6.6 is an ending (same as 6.0 except navigator is alive, leftenant and cargomen dead)
 		//6.7 is an ending (same as 6.6 except leftenant is alive)
-		current_state = states["3.1"];
-		states["3.1"].add_child("engineer", states["4.1"]);
+		
+        //FAKE ENDING STATES
+        //7.0
+		locations = new Dictionary<string, string>();
+		convos = new Dictionary<string, Converstaion>();
+		states["7.0"] = new State("7.0", "good_ending", null, convos, locations);
+        //7.1
+		locations = new Dictionary<string, string>();
+		convos = new Dictionary<string, Converstaion>();
+		states["7.1"] = new State("7.1", "bad_ending", null, convos, locations);
+              
+        //adding child states
+        states["1.0"].add_child("day_one", states["2.0"]);
+        
+        states["2.0"].add_child("cook", states["7.1"]);
+        states["2.0"].add_child("cargo_man", states["3.1"]);
+        states["2.0"].add_child("engineer", states["3.1"]);
+        states["2.0"].add_child("doctor", states["3.1"]);
+        states["2.0"].add_child("leftenant", states["3.1"]);
+        states["2.0"].add_child("cargo_man_mate", states["3.2"]);
+        states["2.0"].add_child("navigator", states["3.2"]);
+        
+        states["3.1"].add_child("cook", states["4.0"]);
+        states["3.1"].add_child("engineer", states["4.1"]);
+        states["3.1"].add_child("doctor", states["4.3"]);
+        states["3.1"].add_child("leftenant", states["4.2"]);
+        states["3.1"].add_child("cargo_man", states["4.2"]);
+        states["3.1"].add_child("cargo_man_mate", states["4.2"]);
+        
+        states["3.2"].add_child("cook", states["4.5"]);
+        states["3.2"].add_child("engineer", states["4.5"]);
+        states["3.2"].add_child("doctor", states["4.4"]);
+        states["3.2"].add_child("leftenant", states["4.4"]);
+        states["3.2"].add_child("cargo_man", states["4.6"]);
+        states["3.2"].add_child("cargo_man_mate", states["4.4"]);
+        states["3.2"].add_child("navigator", states["4.6"]);
+        
+        states["4.0"].add_child("cook", states["5.0"]);
+        states["4.0"].add_child("doctor", states["5.1"]);
+        states["4.0"].add_child("cargo_man", states["5.2"]);
+        states["4.0"].add_child("cargo_man_mate", states["5.2"]);
+        states["4.0"].add_child("navigator", states["5.2"]);
+        
+        states["4.1"].add_child("cook", states["5.3"]);
+        states["4.1"].add_child("engineer", states["7.1"]);
+        states["4.1"].add_child("leftenant", states["5.5"]);
+        states["4.1"].add_child("cargo_man", states["5.5"]);
+        states["4.1"].add_child("cargo_man_mate", states["5.5"]);
+        
+        states["4.2"].add_child("cook", states["7.0"]);
+        states["4.2"].add_child("leftenant", states["7.1"]);
+        states["4.2"].add_child("cargo_man", states["7.1"]);
+        states["4.2"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["4.3"].add_child("cook", states["7.0"]);
+        states["4.3"].add_child("leftenant", states["7.1"]);
+        states["4.3"].add_child("doctor", states["7.1"]);
+        states["4.3"].add_child("cargo_man", states["7.1"]);
+        states["4.3"].add_child("cargo_man_mate", states["7.1"]);
+		states["4.3"].add_child("engineer", states["7.1"]);
+        
+        states["4.4"].add_child("cook", states["5.10"]);
+        states["4.4"].add_child("leftenant", states["5.9"]);
+        states["4.4"].add_child("doctor", states["5.11"]);
+        states["4.4"].add_child("cargo_man", states["5.9"]);
+        states["4.4"].add_child("cargo_man_mate", states["5.9"]);
+        
+        states["4.5"].add_child("cook", states["5.3"]);
+        states["4.5"].add_child("leftenant", states["5.3"]);
+        states["4.5"].add_child("doctor", states["5.3"]);
+        states["4.5"].add_child("cargo_man", states["5.3"]);
+        states["4.5"].add_child("cargo_man_mate", states["5.3"]);
+        states["4.5"].add_child("engineer", states["7.1"]);
+        
+        states["4.6"].add_child("cook", states["5.17"]);
+        states["4.6"].add_child("leftenant", states["5.17"]);
+        states["4.6"].add_child("doctor", states["5.13"]);
+        states["4.6"].add_child("cargo_man", states["7.1"]);
+        states["4.6"].add_child("cargo_man_mate", states["7.1"]);
+        states["4.6"].add_child("navigator", states["7.1"]);
+        
+        states["5.0"].add_child("cook", states["7.0"]);
+        states["5.0"].add_child("leftenant", states["7.1"]);
+        states["5.0"].add_child("doctor", states["7.1"]);
+        states["5.0"].add_child("cargo_man", states["7.1"]);
+        states["5.0"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.1"].add_child("cook", states["7.0"]);
+        states["5.1"].add_child("leftenant", states["7.1"]);
+        states["5.1"].add_child("doctor", states["7.1"]);
+        states["5.1"].add_child("cargo_man", states["7.1"]);
+        states["5.1"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.2"].add_child("cook", states["7.0"]);
+        states["5.2"].add_child("leftenant", states["7.1"]);
+        states["5.2"].add_child("doctor", states["7.1"]);
+        states["5.2"].add_child("cargo_man", states["7.1"]);
+        states["5.2"].add_child("cargo_man_mate", states["7.1"]);
+		
+		states["5.3"].add_child("cook", states["7.0"]);
+        states["5.3"].add_child("leftenant", states["7.1"]);
+        states["5.3"].add_child("doctor", states["7.1"]);
+        states["5.3"].add_child("cargo_man", states["7.1"]);
+        states["5.3"].add_child("cargo_man_mate", states["7.1"]);	
+		
+        states["5.5"].add_child("cook", states["7.0"]);
+        states["5.5"].add_child("leftenant", states["7.1"]);
+        states["5.5"].add_child("cargo_man", states["7.1"]);
+        states["5.5"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.9"].add_child("cook", states["7.0"]);
+        states["5.9"].add_child("leftenant", states["7.1"]);
+        states["5.9"].add_child("cargo_man", states["7.1"]);
+        states["5.9"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.10"].add_child("cook", states["7.0"]);
+        states["5.10"].add_child("leftenant", states["7.1"]);
+        states["5.10"].add_child("doctor", states["7.1"]);
+        states["5.10"].add_child("cargo_man", states["7.1"]);
+        states["5.10"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.11"].add_child("cook", states["7.0"]);
+        states["5.11"].add_child("leftenant", states["7.1"]);
+        states["5.11"].add_child("doctor", states["7.1"]);
+        states["5.11"].add_child("cargo_man", states["7.1"]);
+        states["5.11"].add_child("cargo_man_mate", states["7.1"]);
+        
+        states["5.13"].add_child("cook", states["7.0"]);
+        states["5.13"].add_child("navigator", states["7.1"]);
+        states["5.13"].add_child("doctor", states["7.1"]);
+        
+        //states["5.16"].add_child("cook", states["7.0"]);
+        //states["5.16"].add_child("navigator", states["7.1"]);
+        //states["5.16"].add_child("doctor", states["7.1"]);
+        
+        states["5.17"].add_child("cook", states["7.0"]);
+        states["5.17"].add_child("navigator", states["7.1"]);
+        states["5.17"].add_child("doctor", states["7.1"]);
+        states["5.17"].add_child("leftenant", states["7.1"]);
+		
+		
+		current_state = states["2.0"];
 	}
 	
 	public void brig(string s){
@@ -513,8 +725,11 @@ public class idiort_move : MonoBehaviour {
 	
 	void end_day(){
 		current_state = current_state.get_child(next_day);
+		day = current_state.day;
+		Debug.Log(day);
 		current_state.play_intro();
 		day_starting = true;
+		rooms_visited = new List<string>();
 		walking_to_brig = false;
 	}
 	
@@ -525,20 +740,22 @@ public class idiort_move : MonoBehaviour {
 	public void play_audio(string room){
 		if(walking_to_brig){
 			if(room == "security_office"){
-				end_day();	
+				end_day();
 			}
 		} else {
 			Converstaion conv = current_state.play_room(room);
-			if(conv != null){
+			if(conv != null && !rooms_visited.Contains(room)){
 				c = conv;
 				playing = true;
-				rooms_visited++;
+				rooms_visited.Add(room);
 			}
 		}
 	}
 	
 	void move_to_bridge(){
 		idling = !idling;
+		playing = false;
+		c = null;
 		this.GetComponent<red_alert>().emergency();
 		int i = 0;
 		GameObject[] navs = GameObject.FindGameObjectsWithTag("bridge");
@@ -562,6 +779,7 @@ public class idiort_move : MonoBehaviour {
 			move_to_bridge();
 		} else {
 			idling = !idling;
+			rooms_visited = new List<string>();
 		}
 	}
 	
@@ -570,19 +788,19 @@ public class idiort_move : MonoBehaviour {
 		if(day_starting && !sound.isPlaying){
 			idling = true;
 			day_starting = false;
-			this.GetComponent<red_alert>().emergency();
+			this.GetComponent<red_alert>().end_alert();
 		}
 		if(playing){
 			playing = c.play();
-		} else if(rooms_visited > 1 && idling){
-			//emergency();
+		} else if(rooms_visited.Count >= 2 && idling){
+			move_to_bridge();
 		}
 		if (Input.GetKeyDown(KeyCode.B)){
 			if(idling){
 				emergency();
 			} else {
-				this.GetComponent<red_alert>().emergency();
-				idling = !idling;	
+				this.GetComponent<red_alert>().end_alert();
+				idling = true;	
 			}
 		}
 	}
@@ -592,12 +810,13 @@ public class Converstaion{
 	private Dictionary<string, AudioSource> sources;
 	private List<conv> convo;
 	public string AUDIO_PATH = "Assets/Audio/";
-	private int current_speaker;
+	private AudioSource current_speaker;
+	private int next_speaker;
 	
 	public Converstaion(file_loc[] dialog){
 		sources = new Dictionary<string, AudioSource>();
 		convo = new List<conv>();
-		current_speaker = 0;
+		next_speaker = 0;
 		foreach(file_loc t in dialog){
 			AudioClip a = Resources.Load(t.file_name) as AudioClip;
 			convo.Add(new conv(t.speaker, a));
@@ -608,29 +827,30 @@ public class Converstaion{
 		}
 	}
 	
+	private bool set_speaker(){
+		current_speaker = sources[convo[next_speaker].speaker];
+		if(convo[next_speaker].noise == null){
+			Debug.LogError("Missing Audio " + convo[next_speaker]);
+		}
+		current_speaker.clip = convo[next_speaker].noise;
+		current_speaker.Play();
+		next_speaker++;
+		return true;
+	}
+	
 	public bool play(){
-		if(current_speaker >= convo.Count){
-			return false;	
+		if(next_speaker == 0){
+			return set_speaker();
 		}
-		
-		AudioSource speaker;
-		if(current_speaker == 0){
-			speaker = sources[convo[current_speaker].speaker];
-		} else {
-			speaker = sources[convo[current_speaker - 1].speaker];
-		}
-		if(speaker.isPlaying){
+		if(current_speaker.isPlaying){
 			return true;
 		} else {
-			if(convo[current_speaker].noise == null){
-				Debug.LogError("Missing Audio " + convo[current_speaker]);
+			if(next_speaker >= convo.Count){
+				return false;
+			} else {
+				return set_speaker();
 			}
-			speaker.clip = convo[current_speaker].noise;
-			speaker.Play();
-			current_speaker++;
-			return true;
 		}
-		return false;
 	}
 }
 
@@ -641,7 +861,7 @@ public class State {
 	// Dictionary { name -> room }
 	private Dictionary<string, Converstaion> dialog;
 	// Dictionary{ room -> conversation }
-	private string day;
+	public string day;
 	private string opening_speech;
 	private string closing_speech;
 	private AudioSource audio;
@@ -667,15 +887,22 @@ public class State {
 	}
 	
 	public void play_intro(){
-		AudioClip a = Resources.Load("opening") as AudioClip;
-		audio.clip = a;
-		audio.Play();
+		if(opening_speech != null){
+			if(day == "7.1" || day == "7.0"){
+				GameObject.Find("bgm").GetComponent<AudioSource>().Stop();	
+			}
+			AudioClip a = Resources.Load(opening_speech) as AudioClip;
+			audio.clip = a;
+			audio.Play();
+		}
 	}
 	
 	public void play_outro(){
-		AudioClip a = Resources.Load("closing") as AudioClip;
-		audio.clip = a;
-		audio.Play();
+		if(closing_speech != null){
+			AudioClip a = Resources.Load(closing_speech) as AudioClip;
+			audio.clip = a;
+			audio.Play();
+		}
 	}
 	
 	public Converstaion play_room(string room){

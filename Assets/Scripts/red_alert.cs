@@ -16,8 +16,12 @@ public class red_alert : MonoBehaviour {
 	}
 	
 	public void emergency(){
-		alert = !alert;
+		alert = true;
 		play_klaxon();
+	}
+	
+	public void end_alert(){
+		alert = false;	
 	}
 	
 	void play_klaxon(){
