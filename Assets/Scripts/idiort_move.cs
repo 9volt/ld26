@@ -24,7 +24,6 @@ public struct file_loc {
 
 public class idiort_move : MonoBehaviour {
 	private GameObject[] idiorts;
-	private GameObject[] navs;
 	public bool idling;
 	public int day;
 	private Converstaion c;
@@ -32,10 +31,13 @@ public class idiort_move : MonoBehaviour {
 	private Dictionary<string, State> states;
 	private bool playing;
 	private int rooms_visited;
+	public bool walking_to_brig;
+	private string next_day;
+	private AudioSource sound;
+	private bool day_starting;
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
-		navs = GameObject.FindGameObjectsWithTag("bridge");
 		rooms_visited = 0;
 		idling = true;
 		day = 1;
@@ -50,6 +52,10 @@ public class idiort_move : MonoBehaviour {
 //		home["cargo_man_mate"] = "cargo_hold";
 		states = new Dictionary<string, State>();
 		playing = false;
+		walking_to_brig = false;
+		next_day = null;
+		day_starting = false;
+		sound = this.GetComponent<AudioSource>();
 		create_states();
 	}
 	
@@ -495,14 +501,21 @@ public class idiort_move : MonoBehaviour {
 		//6.6 is an ending (same as 6.0 except navigator is alive, leftenant and cargomen dead)
 		//6.7 is an ending (same as 6.6 except leftenant is alive)
 		current_state = states["3.1"];
-		current_state.add_child("engineer", states["4.1"]);
+		states["3.1"].add_child("engineer", states["4.1"]);
 	}
 	
 	public void brig(string s){
-		Debug.Log(s);
-		current_state = current_state.get_child(s);
+		walking_to_brig = true;
+		next_day = s;
+		NavMeshAgent i = GameObject.Find(s).GetComponent<NavMeshAgent>();
+		i.SetDestination(GameObject.FindGameObjectWithTag("brig").GetComponent<Transform>().position);
+	}
+	
+	void end_day(){
+		current_state = current_state.get_child(next_day);
 		current_state.play_intro();
-		emergency();
+		day_starting = true;
+		walking_to_brig = false;
 	}
 	
 	public string where_should_I_be(string who){
@@ -510,18 +523,25 @@ public class idiort_move : MonoBehaviour {
 	}
 	
 	public void play_audio(string room){
-		Converstaion conv = current_state.play_room(room);
-		if(conv != null){
-			c = conv;
-			playing = true;
-			rooms_visited++;
+		if(walking_to_brig){
+			if(room == "security_office"){
+				end_day();	
+			}
+		} else {
+			Converstaion conv = current_state.play_room(room);
+			if(conv != null){
+				c = conv;
+				playing = true;
+				rooms_visited++;
+			}
 		}
 	}
 	
-	void emergency(){
+	void move_to_bridge(){
 		idling = !idling;
 		this.GetComponent<red_alert>().emergency();
 		int i = 0;
+		GameObject[] navs = GameObject.FindGameObjectsWithTag("bridge");
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
 		foreach(GameObject idiort in idiorts){
 			NavMeshAgent n = idiort.GetComponent<NavMeshAgent>();
@@ -536,8 +556,22 @@ public class idiort_move : MonoBehaviour {
 		}
 	}
 	
+	
+	void emergency(){
+		if(idling){
+			move_to_bridge();
+		} else {
+			idling = !idling;
+		}
+	}
+	
 	// Update is called once per frame
 	void Update () {
+		if(day_starting && !sound.isPlaying){
+			idling = true;
+			day_starting = false;
+			this.GetComponent<red_alert>().emergency();
+		}
 		if(playing){
 			playing = c.play();
 		} else if(rooms_visited > 1 && idling){
