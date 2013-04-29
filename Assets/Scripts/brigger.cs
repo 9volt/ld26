@@ -37,10 +37,14 @@ public class brigger : MonoBehaviour {
 		float dist = 1000f;
 		foreach(GameObject g in GameObject.FindGameObjectsWithTag("idiort")){
 			Vector3 d = g.GetComponent<Transform>().position;
-			float new_dist = Vector3.Distance(loc.position, d);
-			if(new_dist < dist){
-				closest = g.name;
-				dist = new_dist;
+			if(g.name == "captain" || g.name == "first_mate"){
+				//can't brig these two
+			}else{
+				float new_dist = Vector3.Distance(loc.position, d);
+				if(new_dist < dist){
+					closest = g.name;
+					dist = new_dist;
+				}
 			}
 		}
 		return closest;
@@ -50,9 +54,15 @@ public class brigger : MonoBehaviour {
 		gui = "Click to put " + names[s] + " in the brig";
 	}
 	
+	void print_instructions(){
+		gui = "Follow the prisoner to the brig";
+	}
+	
 	// Update is called once per frame
 	void Update () {
-		if(!master.idling){
+		if(master.walking_to_brig){
+			print_instructions();	
+		} else if(!master.idling){
 			string closest = find_closest();
 			if(closest != null){
 				print_gui(closest);

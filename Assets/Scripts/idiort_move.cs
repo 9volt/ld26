@@ -798,9 +798,6 @@ public class idiort_move : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.B)){
 			if(idling){
 				emergency();
-			} else {
-				this.GetComponent<red_alert>().end_alert();
-				idling = true;	
 			}
 		}
 	}
