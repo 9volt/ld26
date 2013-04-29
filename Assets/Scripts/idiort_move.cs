@@ -27,34 +27,67 @@ public class idiort_move : MonoBehaviour {
 	private GameObject[] navs;
 	public bool idling;
 	public int day;
-	private Dictionary<string, string> home;
-	public Converstaion c;
-
+	private Converstaion c;
+	private State current_state;
+	private Dictionary<string, State> states;
+	private bool playing;
 	// Use this for initialization
 	void Start () {
 		idiorts = GameObject.FindGameObjectsWithTag("idiort");
 		navs = GameObject.FindGameObjectsWithTag("bridge");
 		idling = true;
 		day = 1;
-		home = new Dictionary<string, string>();
-		home["captain"] = "captains_quarters";
-		home["first_mate"] = "captain_chair";
-		home["cook"] = "common_room";
-		home["doctor"] = "med_bay";
-		home["engineer"] = "engineering";
-		home["engineer_mate"] = "engineering";
-		home["navigator"] = "navigation";
-		home["cargo_man"] = "cargo_hold";
-		home["cargo_man_mate"] = "cargo_hold";
+//		home["captain"] = "captains_quarters";
+//		home["first_mate"] = "captain_chair";
+//		home["cook"] = "common_room";
+//		home["doctor"] = "med_bay";
+//		home["engineer"] = "engineering";
+//		home["leftenant"] = "engineering";
+//		home["navigator"] = "navigation";
+//		home["cargo_man"] = "cargo_hold";
+//		home["cargo_man_mate"] = "cargo_hold";
+		states = new Dictionary<string, State>();
+		playing = false;
+		create_states();
+	}
+	
+	private void create_states(){
+		//Day 3.1
+		Dictionary<string, string> locations = new Dictionary<string, string>(){
+			{"doctor", "engineering"},
+			{"leftenant", "med_bay"},
+			{"engineer", "engineering"},
+			{"cook", "common_room"},
+			{"cargo_man", "cargo_hold"},
+			{"cargo_man_mate", "cargo_hold"},
+			{"captain", "captains_quarters"}
+		};
+		Dictionary<string, Converstaion> convos = new Dictionary<string, Converstaion>(){
+			{"cargo_hold", new Converstaion(new file_loc[2]{
+					new file_loc("cargo_man", "35"),
+					new file_loc("cargo_man_mate", "212")})}
+		};
+		states["3.1"] = new State("3.1", "none", "none", convos, locations);
+		current_state = states["3.1"];
 	}
 	
 	public string where_should_I_be(string who){
-		return home[who];
+		return current_state.go_forth(who);
 	}
 	
+	public void play_audio(string room){
+		Converstaion conv = current_state.play_room(room);
+		if(conv != null){
+			c = conv;
+			playing = true;
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(playing){
+			playing = c.play();
+		}
 		if (Input.GetKeyDown(KeyCode.B)){
 			if(idling){
 				idling = !idling;
@@ -98,13 +131,14 @@ public class Converstaion{
 	}
 	
 	public bool play(){
-		if(current_speaker > convo.Count){
+		if(current_speaker >= convo.Count){
 			return false;	
 		}
+		
 		AudioSource speaker;
 		if(current_speaker == 0){
 			speaker = sources[convo[current_speaker].speaker];
-		}else{
+		} else {
 			speaker = sources[convo[current_speaker - 1].speaker];
 		}
 		if(speaker.isPlaying){
@@ -113,6 +147,7 @@ public class Converstaion{
 			speaker.clip = convo[current_speaker].noise;
 			speaker.Play();
 			current_speaker++;
+			return true;
 		}
 		return false;
 	}
@@ -125,13 +160,33 @@ public class State {
 	// Dictionary { name -> room }
 	private Dictionary<string, Converstaion> dialog;
 	// Dictionary{ room -> conversation }
-	private int day;
+	private string day;
+	private string opening_speech;
+	private string closing_speech;
 	
-	public State(int d){
+	public State(string d, string opening, string close, Dictionary<string, Converstaion> convos, Dictionary<string, string> rooms){
 		day = d;
+		opening_speech = opening;
+		closing_speech = close;
 		children = new Dictionary<string, State>();
-		room_assignments = new Dictionary<string, string>();
-		dialog = new Dictionary<string, Converstaion>();
+		room_assignments = rooms;
+		dialog = convos;
+	}
+	
+	public string go_forth(string who){
+		if(room_assignments.ContainsKey(who)){
+			return room_assignments[who];
+		} else {
+			return "common_room";
+		}
+	}
+	
+	public Converstaion play_room(string room){
+		if(dialog.ContainsKey(room)){
+			return dialog[room];
+		} else {
+			return null;
+		}
 	}
 	
 	public void add_child(string name, State child){
