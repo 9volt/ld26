@@ -14,16 +14,17 @@ Theme - Minimalism:
  * Minimal Style: Explore a clean modern spaceship with a crew of simple stylized aliens.
  
 Tools Used:
-Unity Pro Trial
-Chat Mapper Trial
-Sculpturis Alpha
-Blender
-Audacity
+ * Unity Pro Trial
+ * Chat Mapper Trial
+ * Sculpturis Alpha
+ * Blender
+ * Audacity
 
-Paint Tool Sai(Read Me-art)
-chronolapse - timelapse
-notepad++
-notepad
+ 
+ * Paint Tool Sai(Read Me-art)
+ * chronolapse - timelapse
+ * notepad++
+ * notepad
 
 
 ![](http://i.imgur.com/W0WNigP.png)
