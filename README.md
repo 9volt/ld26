@@ -1,6 +1,7 @@
 ## Murder on the Tuberosum
 
 This is Joseph and Sonya's Ludum Dare 26 jam game.
+
 Many many thanks to our friends for voice acting and writing music for us!
 
 It is very much in progress but can be played at the link below.
@@ -20,6 +21,7 @@ Tools Used:
  * Sculpturis Alpha
  * Blender
  * Audacity
+ * App Notion
  * Paint Tool Sai(Read Me-art)
  * chronolapse - timelapse
  * notepad++
