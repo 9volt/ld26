@@ -587,11 +587,19 @@ public class idiort_move : MonoBehaviour {
 		locations = new Dictionary<string, string>();
 		convos = new Dictionary<string, Converstaion>();
 		states["7.1"] = new State("7.1", "bad_ending", null, convos, locations);
+		//7.2
+		locations = new Dictionary<string, string>();
+		convos = new Dictionary<string, Converstaion>();
+		states["7.2"] = new State("7.2", "bad_ending", null, convos, locations);
+		//7.3
+		locations = new Dictionary<string, string>();
+		convos = new Dictionary<string, Converstaion>();
+		states["7.3"] = new State("7.3", "bad_ending", null, convos, locations);
               
         //adding child states
         states["1.0"].add_child("day_one", states["2.0"]);
         
-        states["2.0"].add_child("cook", states["7.1"]);
+        states["2.0"].add_child("cook", states["7.2"]);
         states["2.0"].add_child("cargo_man", states["3.1"]);
         states["2.0"].add_child("engineer", states["3.1"]);
         states["2.0"].add_child("doctor", states["3.1"]);
@@ -632,11 +640,11 @@ public class idiort_move : MonoBehaviour {
         states["4.2"].add_child("cargo_man_mate", states["7.1"]);
         
         states["4.3"].add_child("cook", states["7.0"]);
-        states["4.3"].add_child("leftenant", states["7.1"]);
-        states["4.3"].add_child("doctor", states["7.1"]);
-        states["4.3"].add_child("cargo_man", states["7.1"]);
-        states["4.3"].add_child("cargo_man_mate", states["7.1"]);
-		states["4.3"].add_child("engineer", states["7.1"]);
+        states["4.3"].add_child("leftenant", states["7.2"]);
+        states["4.3"].add_child("doctor", states["7.2"]);
+        states["4.3"].add_child("cargo_man", states["7.2"]);
+        states["4.3"].add_child("cargo_man_mate", states["7.2"]);
+		states["4.3"].add_child("engineer", states["7.2"]);
         
         states["4.4"].add_child("cook", states["5.10"]);
         states["4.4"].add_child("leftenant", states["5.9"]);
@@ -654,8 +662,8 @@ public class idiort_move : MonoBehaviour {
         states["4.6"].add_child("cook", states["5.17"]);
         states["4.6"].add_child("leftenant", states["5.17"]);
         states["4.6"].add_child("doctor", states["5.13"]);
-        states["4.6"].add_child("cargo_man", states["7.1"]);
-        states["4.6"].add_child("cargo_man_mate", states["7.1"]);
+        states["4.6"].add_child("cargo_man", states["7.3"]);
+        states["4.6"].add_child("cargo_man_mate", states["7.3"]);
         states["4.6"].add_child("navigator", states["7.1"]);
         
         states["5.0"].add_child("cook", states["7.0"]);
@@ -677,10 +685,10 @@ public class idiort_move : MonoBehaviour {
         states["5.2"].add_child("cargo_man_mate", states["7.1"]);
 		
 		states["5.3"].add_child("cook", states["7.0"]);
-        states["5.3"].add_child("leftenant", states["7.1"]);
-        states["5.3"].add_child("doctor", states["7.1"]);
-        states["5.3"].add_child("cargo_man", states["7.1"]);
-        states["5.3"].add_child("cargo_man_mate", states["7.1"]);	
+        states["5.3"].add_child("leftenant", states["7.2"]);
+        states["5.3"].add_child("doctor", states["7.2"]);
+        states["5.3"].add_child("cargo_man", states["7.2"]);
+        states["5.3"].add_child("cargo_man_mate", states["7.2"]);	
 		
         states["5.5"].add_child("cook", states["7.0"]);
         states["5.5"].add_child("leftenant", states["7.1"]);
@@ -731,7 +739,7 @@ public class idiort_move : MonoBehaviour {
 	void end_day(){
 		current_state = current_state.get_child(next_day);
 		day = current_state.day;
-		if(day == "7.1"){
+		if(day == "7.1" || day == "7.2" || day == "7.3"){
 			bad_end = true;
 		}else if(day == "7.0"){
 			good_end = true;	
@@ -796,13 +804,23 @@ public class idiort_move : MonoBehaviour {
 	
 	void OnGUI(){
 		if(bad_end){
+			string killed_by = "";
+			if(day == "7.1"){
+				killed_by = "the parasite";
+			} else if (day == "7.2"){
+				killed_by = "the mutineers";
+			}else if (day == "7.3"){
+				killed_by = "a vigilante";
+			}
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
-			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "You died during the time skip, better luck next time");
+			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "You were killed during the time skip by " + killed_by + ", better luck next time");
 		} else if(good_end){
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
 			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "You jailed the parasite and saved the crew!");
 		} else if(day_starting){
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
+			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "Time has slipped...");
+
 		}
 	}
 	
@@ -832,7 +850,7 @@ public class idiort_move : MonoBehaviour {
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.B)){
-			if(idling){
+			if(idling  && day != "1.0"){
 				emergency();
 			}
 		}
