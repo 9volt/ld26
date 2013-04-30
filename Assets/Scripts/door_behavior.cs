@@ -32,7 +32,7 @@ public class door_behavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Time.time - last_up > 3f && open){
+		if(Time.time - last_up > 2f && open){
 			Vector3 down = new Vector3(0, -4, 0);
 			door.Translate(down);
 			open = false;

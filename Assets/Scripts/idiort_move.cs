@@ -286,7 +286,7 @@ public class idiort_move : MonoBehaviour {
 					new file_loc("leftenant", "61")})}//player
 					
 		};
-		states["4.3"] = new State("4.3", "224", "225", convos, locations);
+		states["4.3"] = new State("4.3", "255", null, convos, locations);
 		
 		
 		//Day 4.4
@@ -430,7 +430,7 @@ public class idiort_move : MonoBehaviour {
 					new file_loc("leftenant", "61")})}//player
 					
 		};
-		states["5.3"] = new State("5.3", "224", "225", convos, locations);
+		states["5.3"] = new State("5.3", "255", null, convos, locations);
 		
 		//5.4 is an ending
 		
@@ -820,7 +820,8 @@ public class idiort_move : MonoBehaviour {
 		} else if(day_starting){
 			GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), black_screen);
 			GUI.Label(new Rect((Screen.width / 2) - 100, (Screen.height /2) - 30, 200, 60), "Time has slipped...");
-
+		} else if(day != "1.0" && !walking_to_brig && idling){
+			GUI.Label(new Rect(50, 50, 100, 100), "Press B to call Red Alert");
 		}
 	}
 	
@@ -836,7 +837,7 @@ public class idiort_move : MonoBehaviour {
 		}
 		if(playing){
 			playing = c.play();
-		} else if(rooms_visited.Count >= 2 && idling){
+		} else if(rooms_visited.Count >= 4 && idling){
 			if(day == "1.0"){
 				next_day = "day_one";
 				AudioSource bgm = GameObject.Find("bgm").GetComponent<AudioSource>();
