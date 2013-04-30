@@ -541,7 +541,7 @@ public class idiort_move : MonoBehaviour {
 					new file_loc("captain", "141")})}
 					
 		};
-		states["5.13"] = new State("5.13", "255", "114", convos, locations);
+		states["5.13"] = new State("5.13", "255", null, convos, locations);
 		
 		//5.14 is an ending
 		//5.15 is an ending
@@ -949,8 +949,12 @@ public class State {
 	}
 	
 	public void play_outro(){
+
 		if(closing_speech != null){
+			Debug.Log("Playing Outro");
+			Debug.Log(closing_speech);
 			AudioClip a = Resources.Load(closing_speech) as AudioClip;
+			Debug.Log(a);
 			audio.clip = a;
 			audio.Play();
 		}

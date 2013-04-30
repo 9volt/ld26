@@ -12,7 +12,7 @@ public class red_alert : MonoBehaviour {
 		lights = GameObject.FindGameObjectsWithTag("lights");
 		alert = false;
 		rising = true;
-		audio = this.GetComponent<AudioSource>();
+		audio = GameObject.Find("red_alert").GetComponent<AudioSource>();
 	}
 	
 	public void emergency(){
@@ -25,8 +25,6 @@ public class red_alert : MonoBehaviour {
 	}
 	
 	void play_klaxon(){
-		AudioClip a = Resources.Load("red_alert") as AudioClip;
-		audio.clip = a;
 		audio.Play();
 	}
 	
