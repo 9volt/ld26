@@ -19,8 +19,6 @@ Tools Used:
  * Sculpturis Alpha
  * Blender
  * Audacity
-
- 
  * Paint Tool Sai(Read Me-art)
  * chronolapse - timelapse
  * notepad++
