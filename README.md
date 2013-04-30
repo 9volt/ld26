@@ -24,7 +24,7 @@ Tools Used:
  * chronolapse - timelapse
  * notepad++
  * notepad
- * friend's voice and music talents
+ * friends' voice and music talents
 
 
 ![](http://i.imgur.com/W0WNigP.png)
